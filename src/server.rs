@@ -160,18 +160,13 @@ pub async fn start_server() -> Result<()> {
                                 let mut map = USER_MAP.lock().await;
                                 let mut writer = map.get_mut(&current_id).unwrap();
                                 current_friend_id = line_split[1].to_string();
-                                writer
-                                    .write_all("Change Successful\n".as_bytes())
-                                    .await
-                                    .unwrap();
+                                writer.write_all("选择好友成功\n".as_bytes()).await.unwrap();
                             } else {
                                 let mut map = USER_MAP.lock().await;
                                 let mut writer = map.get_mut(&current_id).unwrap();
                                 //给自己发送一个不是好友
                                 writer
-                                    .write_all(
-                                        "Ur not firends or ur friends is not online\n".as_bytes(),
-                                    )
+                                    .write_all("你们还不是好友或好友没有上线\n".as_bytes())
                                     .await
                                     .unwrap();
                             }
