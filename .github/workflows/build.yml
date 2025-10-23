@@ -1,0 +1,43 @@
+name: Build Releases
+
+on:
+  push:
+    branches: [ simple-send-sis ]   # 👈 改这里
+  pull_request:
+    branches: [ simple-send-sis ]   # 👈 改这里
+  workflow_dispatch:                # 手动触发（始终可用）
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add x86_64-pc-windows-gnu
+      - run: cargo build --release --target x86_64-pc-windows-gnu
+      - uses: actions/upload-artifact@v4
+        with:
+          name: myqq2-windows
+          path: target/x86_64-pc-windows-gnu/release/myqq2.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release --target x86_64-unknown-linux-gnu
+      - uses: actions/upload-artifact@v4
+        with:
+          name: myqq2-linux
+          path: target/x86_64-unknown-linux-gnu/release/myqq2
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: myqq2-macos
+          path: target/release/myqq2

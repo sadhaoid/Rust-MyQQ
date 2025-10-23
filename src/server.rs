@@ -3,7 +3,6 @@ use crate::handle_client::{change_function, login_function, send_function};
 use crate::users::USERSLIST;
 use std::collections::HashMap;
 use std::io::{Result, WriterPanicked};
-use std::os::unix::thread;
 use std::string;
 use std::sync::{Arc, LazyLock};
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
