@@ -61,7 +61,7 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
             match buf_reader.read_line(&mut input).await {
                 Ok(0) => {
                     client_output
-                        .write_all("Server is closed!".as_bytes())
+                        .write_all("Server is closed!\n".as_bytes())
                         .await
                         .unwrap();
                     client_output.flush().await.unwrap();
@@ -81,6 +81,5 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
 
     y.await.unwrap();
     x.abort();
-    println!("async is closed!");
     Ok(())
 }
