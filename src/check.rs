@@ -1,6 +1,5 @@
 use crate::global::FRIEND_MAP;
 use crate::server::USER_MAP;
-use crate::users::USERSLIST;
 
 pub async fn check_friend_list(current_id: String) -> Vec<u64> {
     let trnasfer_unpacked_friend_map = FRIEND_MAP.lock().await;

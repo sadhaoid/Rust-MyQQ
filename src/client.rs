@@ -2,14 +2,9 @@ use clap::Parser;
 use config::Config;
 use std::collections::HashMap;
 use std::error::Error;
-use std::fs;
-use std::io;
-use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader, stdin, stdout};
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader, stdin, stdout};
 use tokio::net::TcpStream;
-use tokio::time::{Duration, sleep};
-use tokio::{self, stream};
-
-use crate::handle_client::{change_function, login_function, send_function};
+use tokio::{self};
 
 #[derive(Parser)]
 struct SettingPath {
@@ -29,9 +24,9 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
         .try_deserialize::<HashMap<String, String>>()
         .unwrap();
 
-    let mut stream: TcpStream = TcpStream::connect(&path_map.get("path").unwrap()).await?;
+    let stream: TcpStream = TcpStream::connect(&path_map.get("path").unwrap()).await?;
 
-    let (mut reader, mut writer) = stream.into_split();
+    let (reader, mut writer) = stream.into_split();
 
     println!("Please Login first");
 
@@ -43,11 +38,11 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
         loop {
             //println!("loop 1 is running");
             let mut input = String::new();
-            buf_reader.read_line(&mut input).await;
+            buf_reader.read_line(&mut input).await.unwrap();
             //println!("read_line function");
 
-            writer.write_all(input.as_bytes()).await;
-            writer.flush().await;
+            writer.write_all(input.as_bytes()).await.unwrap();
+            writer.flush().await.unwrap();
         }
     });
 
@@ -72,7 +67,7 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
                     client_output.write_all(input.as_bytes()).await.unwrap();
                     client_output.flush().await.unwrap();
                 }
-                Err(e) => {
+                Err(_e) => {
                     return;
                 }
             };

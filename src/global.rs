@@ -20,13 +20,4 @@ pub async fn read_friends() {
         let mut map = FRIEND_MAP.lock().await;
         *map = friend_store;
     }
-    //println!("good: {:?}", FRIEND_MAP)
 }
-
-// pub async fn load_global() -> Result<(), Box<dyn std::error::Error>> {
-//     let data = read_friends().await?;
-//     let mut map = FRIEND_MAP.lock().await;
-
-//     *map = data;
-//     Ok(())
-// }

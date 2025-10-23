@@ -1,8 +1,4 @@
-use std::io::WriterPanicked;
-use std::sync::LazyLock;
-use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
-use tokio::net::tcp::OwnedWriteHalf;
-use tokio::sync::Mutex;
+use tokio::io::AsyncWriteExt;
 
 use crate::check::check_friend_list;
 use crate::global::FRIEND_MAP;
@@ -60,6 +56,7 @@ pub async fn change_function(line: String, current_id: String) -> String {
         }
     } else if line_split.len() > 2 {
         //"不是朋友或是命令错误或者是好友没有登录, 请使用change命令或使用check命令查看已登录好友列表!\n".to_string()
+        // 正则不过： 命令格式不正确，参考[change 好友ID]
         "命令的长度过长: 请使用change 好友ID即可\n".to_string()
     } else if line_split.len() == 1 {
         "命令的长度过短: 请使用change 好友ID即可\n".to_string()
@@ -98,7 +95,7 @@ pub async fn change_function(line: String, current_id: String) -> String {
     }
 }
 
-pub async fn send_function(line: String, mut current_friend_id: String, current_id: String) {
+pub async fn send_function(line: String, current_friend_id: String, current_id: String) {
     // println!("clinet: {:?}", line);
     // println!("{:?}", current_friend_id);
     let mut map = USER_MAP.lock().await;
