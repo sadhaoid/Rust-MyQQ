@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io;
-use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader, stdin};
+use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader, stdin, stdout};
 use tokio::net::TcpStream;
 use tokio::time::{Duration, sleep};
 use tokio::{self, stream};
@@ -38,6 +38,7 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
     //读控制台，写入流
     let x = tokio::spawn(async move {
         let mut buf_reader = BufReader::new(stdin());
+
         //
         loop {
             //println!("loop 1 is running");
@@ -53,17 +54,23 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
     //读服务端(读stream)，显示在控制台
     let y = tokio::spawn(async move {
         let mut buf_reader = BufReader::new(reader);
+        let mut client_output = stdout();
         loop {
             //println!("loop 2 is running");
             let mut input = String::new();
             match buf_reader.read_line(&mut input).await {
                 Ok(0) => {
-                    println!("Server is closed!");
+                    client_output
+                        .write_all("Server is closed!".as_bytes())
+                        .await
+                        .unwrap();
+                    client_output.flush().await.unwrap();
                     return;
                 }
 
                 Ok(_) => {
-                    println!("{}", input);
+                    client_output.write_all(input.as_bytes()).await.unwrap();
+                    client_output.flush().await.unwrap();
                 }
                 Err(e) => {
                     return;
