@@ -58,8 +58,43 @@ pub async fn change_function(line: String, current_id: String) -> String {
         } else {
             result
         }
+    } else if line_split.len() > 2 {
+        //"不是朋友或是命令错误或者是好友没有登录, 请使用change命令或使用check命令查看已登录好友列表!\n".to_string()
+        "命令的长度过长: 请使用change 好友ID即可\n".to_string()
+    } else if line_split.len() == 1 {
+        "命令的长度过短: 请使用change 好友ID即可\n".to_string()
+    } else if line_split.len() == 2 && !line_split.contains(&"CHANGE") {
+        "请使用change关键词选择好友\n".to_string()
+    } else if line_split.len() == 2
+        && line_split.contains(&"CHANGE")
+        && !USERSLIST.contains(&line_split[1])
+    {
+        "该用户还没有注册\n".to_string()
+    } else if line_split.len() == 2
+        && line_split.contains(&"CHANGE")
+        && USERSLIST.contains(&line_split[1])
+        && !FRIEND_MAP
+            .lock()
+            .await
+            .get(&current_id.parse::<u64>().unwrap())
+            .unwrap()
+            .contains(&line_split[1].parse::<u64>().unwrap())
+    {
+        "该用户还不是你的好友\n".to_string()
+    } else if line_split.len() == 2
+        && line_split.contains(&"CHANGE")
+        && USERSLIST.contains(&line_split[1])
+        && FRIEND_MAP
+            .lock()
+            .await
+            .get(&current_id.parse::<u64>().unwrap())
+            .unwrap()
+            .contains(&line_split[1].parse::<u64>().unwrap())
+        && !a.contains(&line_split[1].to_string())
+    {
+        "该用户还没有登录\n".to_string()
     } else {
-        "不是朋友或是命令错误或者是好友没有登录, 请使用change命令或使用check命令查看已登录好友列表!\n".to_string()
+        "这都有我没有想到的漏洞？？？\n".to_string()
     }
 }
 
