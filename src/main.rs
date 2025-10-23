@@ -34,10 +34,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         client::start_client().await.unwrap();
     }
-    //tokio::signal::ctrl_c().await; //todo
-    //1, login 10001
-    //2, change 10002
-    //3, send hello
 
     Ok(())
 }
