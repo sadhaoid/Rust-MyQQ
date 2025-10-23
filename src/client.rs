@@ -8,7 +8,7 @@ use tokio::{self, stream};
 use crate::handle_client::{change_function, login_function, send_function};
 
 pub async fn start_client() -> Result<(), Box<dyn Error>> {
-    let mut stream: TcpStream = TcpStream::connect("127.0.0.1:8080").await?;
+    let mut stream: TcpStream = TcpStream::connect("192.168.60.66:8080").await?;
 
     let (mut reader, mut writer) = stream.into_split();
 
