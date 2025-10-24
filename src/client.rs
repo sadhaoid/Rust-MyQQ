@@ -1,6 +1,4 @@
 use clap::Parser;
-use config::Config;
-use std::collections::HashMap;
 use std::error::Error;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader, stdin, stdout};
 use tokio::net::TcpStream;
@@ -12,19 +10,8 @@ struct SettingPath {
     path: Option<String>,
 }
 
-pub async fn start_client() -> Result<(), Box<dyn Error>> {
-    //let path = fs::read_to_string()
-    let setting_path = SettingPath::parse().path;
-    let settings = Config::builder()
-        .add_source(config::File::with_name(&setting_path.unwrap()))
-        .build()
-        .unwrap();
-
-    let path_map = settings
-        .try_deserialize::<HashMap<String, String>>()
-        .unwrap();
-
-    let stream: TcpStream = TcpStream::connect(&path_map.get("path").unwrap()).await?;
+pub async fn start_client(addr: &str) -> Result<(), Box<dyn Error>> {
+    let stream: TcpStream = TcpStream::connect(&addr).await?;
 
     let (reader, mut writer) = stream.into_split();
 
