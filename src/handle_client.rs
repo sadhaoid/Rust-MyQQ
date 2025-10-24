@@ -9,15 +9,7 @@ use crate::global::FRIEND_MAP;
 use crate::server::USER_MAP;
 use crate::users::USERSLIST;
 
-//pub static CURRENT_ID: LazyLock<Mutex<String>> = LazyLock::new(|| Mutex::new(String::new()));
-//pub static CURRENT_FRIEND_ID: LazyLock<Mutex<String>> = LazyLock::new(|| Mutex::new(String::new()));
-
-/**
- *
- */
-pub async fn login_function(line: String) -> String {
-    let line = line.trim().to_uppercase();
-    let line_split: Vec<&str> = line.split_whitespace().collect();
+pub async fn login_function(line_split: Vec<&str>) -> String {
     if line_split.len() == 2 && line_split.contains(&"LOGIN") && USERSLIST.contains(&line_split[1])
     {
         line_split[1].to_string()
@@ -28,9 +20,7 @@ pub async fn login_function(line: String) -> String {
 
 // change 的对象有没有上线
 // 做一个好友列表
-pub async fn change_function(line: String, current_id: String) -> String {
-    let line = line.trim().to_uppercase();
-    let line_split: Vec<&str> = line.split_whitespace().collect();
+pub async fn change_function(line_split: Vec<&str>, current_id: String) -> String {
     let a: Vec<String> = USER_MAP.lock().await.keys().cloned().collect();
     if line_split.len() == 2
         && line_split.contains(&"CHANGE")
@@ -43,9 +33,6 @@ pub async fn change_function(line: String, current_id: String) -> String {
             .contains(&line_split[1].parse::<u64>().unwrap())
         && a.contains(&line_split[1].to_string())
     {
-        //*CURRENT_FRIEND_ID.lock().await = line_split[1].to_string();
-        //"Ur Friends Can Chat_client\n".to_string()
-        //println!("second if done");
         line_split[1].to_string()
     } else if line_split.len() == 1 && line_split == ["CHECK"] {
         let mut result = String::new();
@@ -99,15 +86,11 @@ pub async fn change_function(line: String, current_id: String) -> String {
 }
 
 pub async fn send_function(line: String, mut current_friend_id: String, current_id: String) {
-    // println!("clinet: {:?}", line);
-    // println!("{:?}", current_friend_id);
+    println!("{:?},{},{}", line, current_id, current_friend_id);
     let mut map = USER_MAP.lock().await;
-    //println!("{:?}", current_friend_id);
-    //需要判定change的人是否是好友,
-    //还要判断好友是否在线,
-    //客户端退出的时候, 用户也得从map里面清除掉
+    println!("2: {:?},{},{}", line, current_id, current_friend_id);
     let writer = map.get_mut(&current_friend_id).unwrap();
-    //println!("{:?}", writer);
+    println!("3: {:?},{},{}", line, current_id, current_friend_id);
 
     writer
         .write_all(format!("From {} MSG:{}\n", current_id, &line).as_bytes())

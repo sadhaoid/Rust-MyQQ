@@ -53,6 +53,6 @@ pub async fn start_client() -> Result<(), Box<dyn Error>> {
 
     y.await.unwrap();
     x.abort();
-    println!("async is closed!");
+    //println!("Server is closed!\n");
     Ok(())
 }
